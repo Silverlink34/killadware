@@ -24,7 +24,6 @@ echo Please close the window now if you do not accept.
 pause>nul
 REM "CLS" clears the screen of txt.
 CLS
-color 0e
 ECHO Thank you for using my batch file!
 REM The following command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
@@ -60,14 +59,44 @@ REM The "if" command lets me execute commands if the conditions are met or not.
 REM These commands will find out which processor type you have and set it to "$Explprocsr"
 REM (explained processor)
 IF /I %$Winprocsr%==AMD64 (SET $Explprocsr=%$AMD64%)
+IF /I %$Winprocsr%==IA64 (SET $Explprocsr=%$IA6464%)
+IF /I %$Winprocsr%==x86 (SET $Explprocsr=%$X86%)
 REM The following commands will compare "$Winver" to the previously set OS variables, 
 REM and determine and output your version and processor type.
 echo.
 IF /I "%$winver%"=="%$Win7sp1%" (echo You are running Windows 7 with Service Pack 1 and have a & echo %$Explprocsr%.)
-pause
+echo.
+echo The script will now check for various programs to help with adware removal.
+ping 1.1.1.1 -n 1 -w 6000 > nul
 cls
-color 04
+color 0c
 echo Checking to see if Malwarebytes is installed...
+echo.
+REM Using "SET" to assign commands to be executed if Malwarebytes is installed or not..
+SET $mbamyes=(
+	echo Malwarebytes Anti-Malware has been detected and installed on your system.
+	echo This script will remove several known adware programs, BUT it is intended to run AFTER
+	echo Malwarebytes has ran, because Malwarebytes will remove a great deal more.
+	echo The intent of this script is to remove programs that Malwarebytes failed to kill/remove.
+	echo.
+	echo If you have already ran Malwarebytes, or want to run the script anyways, press a key to begin adware removal.
+	echo.
+	echo If you wish to run Malwarebytes before continuing, please close this script now and re-run it after scanning.
+	echo It is advised to perform a Full Scan and remove EVERYTHING that is detected, reboot, then run this script.
+	pause>nul
+	echo put adware removal reference variable here
+	ping 1.1.1.1 -n 1 -w 3000 > nul
+)
+SET $mbamno=(
+	echo You do not have Malwarebytes installed on your system. It is advised to run Malwarebytes Full Scan before using this script.
+	echo This script will remove several known adware programs, BUT it is intended to run AFTER
+	echo Malwarebytes has ran, because Malwarebytes will remove a great deal more.
+	echo The intent of this script is to remove programs that Malwarebytes failed to kill/remove.
+	echo.
+	choice /c DR /m Press [D] key to be sent to Malwarebytes Anti-Malware download page. Press [R] to run the script anyways.
+	IF errorlevel 1
+REM Using "IF" command to determine if Malwarebytes is installed, and then sending to the previous "SET" assigned commands.
+IF /I %$Winprocsr%==AMD64 (IF EXIST %ProgramFiles(x86)%/Malwarebytes' Anti-Malware (%$mbamyes%) Else (%$mbamno%))
 pause
 
 
