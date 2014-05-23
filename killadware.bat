@@ -78,7 +78,7 @@ REM Using labelled lines with commands to be executed if Malwarebytes is install
 echo Malwarebytes Anti-Malware has been detected and installed on your system.
 echo.
 echo This script will remove several known adware programs, BUT it is intended to run 
-echo AFTER Malwarebytes has ran, because Malwarebytes will remove a great deal more.
+echo after Malwarebytes has ran, because Malwarebytes will remove a great deal more.
 echo The intent of this script is to remove programs that Malwarebytes failed to remove.
 echo.
 echo If you have already ran Malwarebytes, or want to run the script anyways, press a key to begin adware removal.
