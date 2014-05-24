@@ -25,10 +25,13 @@ pause>nul
 REM "CLS" clears the screen of txt.
 CLS
 ECHO Thank you for using my batch file!
+echo This script is written by Brandon.
+echo If you have any questions email brandongaliher7@gmail.com.
+echo Source is at http://github.com/silverlink34/killadware.git
 REM The following command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
-ping 1.1.1.1 -n 1 -w 2000 > nul
+ping 1.1.1.1 -n 1 -w 5000 > nul
 CLS
 color 0B
 echo Checking Windows Version... 
@@ -65,8 +68,8 @@ REM The following commands will compare "$Winver" to the previously set OS varia
 REM and determine and output your version and processor type.
 echo.
 IF /I "%$winver%"=="%$Win7sp1%" (echo You are running Windows 7 with Service Pack 1 and have a & echo %$Explprocsr%.)
-IF /I "%$winver%"=="%$Win7%" (echo You are running Windows 7 (no service pack) and have a & echo %$Explprocsr%.)
-IF /I "%$winver%"=="%$Winxp%" (echo You are running Windows XP (no service pack).)
+IF /I "%$winver%"=="%$Win7%" (echo You are running Windows 7 with no service pack and have a & echo %$Explprocsr%.)
+IF /I "%$winver%"=="%$Winxp%" (echo You are running Windows XP with no service pack.)
 IF /I "%$winver%"=="%$Winxpsp1%" (echo You are running Windows XP with Service Pack 1.)
 IF /I "%$winver%"=="%$Winxpsp2%" (echo You are running Windows XP with Service Pack 2.)
 IF /I "%$winver%"=="%$Winxpsp3%" (echo You are running Windows XP with Service Pack 3.)
@@ -74,11 +77,12 @@ IF /I "%$winver%"=="%$Win8%" (echo You are running Windows 8 and have a & echo %
 IF /I "%$winver%"=="%$Win81%" (echo You are running Windows 8.1 and have a & echo %$Explprocsr%.)
 echo.
 echo The script will now check for various programs to help with adware removal.
-ping 1.1.1.1 -n 1 -w 6000 > nul
+ping 1.1.1.1 -n 1 -w 3000 > nul
 cls
 echo Checking to see if Malwarebytes is installed...
 echo.
-ping 1.1.1.1 -n 1 -w 1000 > nul
+ping 1.1.1.1 -n 1 -w 2000 > nul
+
 REM Using labelled lines with commands to be executed if Malwarebytes is installed or not. "goto:eof" ends the command list.
 
 :mbamyes
@@ -93,7 +97,7 @@ ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can start a Malwarebytes Full Scan for you.
 set /p ask1=Would you like to run a full scan now? (y/n)
-IF %ask%==y (goto :runmbamscan) else (echo Skipping scan and proceding with adware removal..)
+IF %ask%==y goto runmbamscan else (echo Skipping scan and proceding with adware removal..)
 goto:eof
 
 :mbamno
