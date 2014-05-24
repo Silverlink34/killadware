@@ -31,7 +31,7 @@ echo Source is at http://github.com/silverlink34/killadware.git
 REM The following command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
-ping 1.1.1.1 -n 1 -w 5000 > nul
+ping 1.1.1.1 -n 1 -w 4000 > nul
 CLS
 color 0B
 echo Checking Windows Version... 
@@ -66,15 +66,75 @@ IF /I %$Winprocsr%==IA64 (SET $Explprocsr=%$IA6464%)
 IF /I %$Winprocsr%==x86 (SET $Explprocsr=%$X86%)
 REM The following commands will compare "$Winver" to the previously set OS variables, 
 REM and determine and output your version and processor type.
+REM Using labelled lines with commands to be executed. They will only run if the conditions are met.
+REM Each sequence ends with "goto softwarecheck" which has it navigate to the next step of script.
 echo.
-IF /I "%$winver%"=="%$Win7sp1%" (echo You are running Windows 7 with Service Pack 1 and have a & echo %$Explprocsr%.)
-IF /I "%$winver%"=="%$Win7%" (echo You are running Windows 7 with no service pack and have a & echo %$Explprocsr%.)
-IF /I "%$winver%"=="%$Winxp%" (echo You are running Windows XP with no service pack.)
-IF /I "%$winver%"=="%$Winxpsp1%" (echo You are running Windows XP with Service Pack 1.)
-IF /I "%$winver%"=="%$Winxpsp2%" (echo You are running Windows XP with Service Pack 2.)
-IF /I "%$winver%"=="%$Winxpsp3%" (echo You are running Windows XP with Service Pack 3.)
-IF /I "%$winver%"=="%$Win8%" (echo You are running Windows 8 and have a & echo %$Explprocsr%.)
-IF /I "%$winver%"=="%$Win81%" (echo You are running Windows 8.1 and have a & echo %$Explprocsr%.)
+IF /I "%$winver%"=="%$Win7sp1%" goto 71run
+:71run
+echo You are running Windows 7 && echo %$Explprocsr% with Service Pack 1.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles(x86)%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Win7%" goto 7run
+:7run
+echo You are running Windows 7 && echo %$Explprocsr% with no service packs.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles(x86)%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Winxp%" goto :xprun
+:xprun
+echo You are running Windows XP with no service packs.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Winxpsp1%" goto xp1run
+:xp1run
+echo You are running Windows XP with Service Pack 1.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Winxpsp2%" goto xp2run
+:xp2run
+echo You are running Windows XP with Service Pack 2.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Winxpsp3%" goto xp3run
+:xp3run
+echo You are running Windows XP with Service Pack 3.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Win8%" goto :8run
+:8run
+echo You are running Windows 8 && echo %$Explprocsr%.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles(x86)%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+IF /I "%$winver%"=="%$Win81%" goto 81run
+:81run
+echo You are running Windows 8.1 && echo %$Explprocsr%.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles(x86)%
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto softwarecheck
+
+REM This is the next step of the script that checks for MalwareBytes.
+:softwarecheck
 echo.
 echo The script will now check for various programs to help with adware removal.
 ping 1.1.1.1 -n 1 -w 3000 > nul
@@ -82,8 +142,11 @@ cls
 echo Checking to see if Malwarebytes is installed...
 echo.
 ping 1.1.1.1 -n 1 -w 2000 > nul
-
-REM Using labelled lines with commands to be executed if Malwarebytes is installed or not. "goto:eof" ends the command list.
+REM Using "IF" command to determine if Malwarebytes is installed, and then sending to labelled lines with assigned commands.
+REM "goto" doesn't work too well in parenthesis, and "if"s "else" command requires them.
+REM I am using the "NOT" flag for "IF" which would mean if doesn't exist.
+IF EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamyes
+IF NOT EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamno 
 
 :mbamyes
 cls
@@ -97,8 +160,11 @@ ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can start a Malwarebytes Full Scan for you.
 set /p ask1=Would you like to run a full scan now? (y/n)
-IF %ask%==y goto runmbamscan else (echo Skipping scan and proceding with adware removal..)
-goto:eof
+IF %ask1%==y goto runmbamscan
+IF NOT %ask1%==y echo Skipping scan and proceding with adware removal..
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto dlmbam
+REM goto killadware
 
 :mbamno
 cls
@@ -113,25 +179,43 @@ ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can download Malwarebytes for you and run a Full Scan.
 set /p ask1=Download Malwarebytes and then run a Full Scan? (y/n)
-IF %ask%==y (goto :dlmbam) else (echo Skipping MBAM dl/scan and proceding with adware removal..)
-goto:eof
+IF %ask1%==y goto :dlmbam
+IF NOT %ask1%==y echo Skipping MalwareBytes Download /w scan and proceding with adware removal..)
+goto killadware
 
 :runmbamscan
+cls
 echo didnt write the stuff yet lol
 pause
-goto:eof
+
 
 :dlmbam
 color 0B
 cls
 echo You chose to download Malwarebytes. 
-echo Downloading version 1.75, This version still updates definitions and doesn't use the poopy new interface.
-bitsadmin /transfer DLMBAM http://www.oldapps.com/malwarebytes.php?app=683FDD3D773C58B262DC07CD0C6CE938 %USERPROFILE%/Downloads
+echo We will use V1.75, it works nicely and updates definitions.
+echo.
+echo Downloading mbam1.75.exe to C:\..
+REM This command is calling the download script "dlmbam.vbs"
+REM The script is downloading mbam1.75.exe from my website, and placing it at C:\.
+cscript.exe dlmbam.vbs
+REM Calling "fsize.bat" to find filesize and use "for" to store it to a variable.
+REM Then we can verify if the file downloaded completely/correctly.
+for /f "delims=" %%i in ('fsize.bat C:\mbam1.75.exe') do set $fsizembam=%%i
+if %$fsizembam% EQU 10285040 echo Malwarebytes Installer was successfully downloaded.
+if NOT %$fsizembam% EQU 10285040 goto rdlmbam
+echo Starting installer now. Follow instructions, install to default locations.
+echo Make at the end of the installer you uncheck all options:
+echo "Enable free trial", "Update Malwarebytes" and "Launch" need to be disabled!
+ping 1.1.1.1 -n 1 -w 6000 > nul
+C:/mbam1.75.exe
+goto runmbamscan
 
-goto:eof
+:killadware
+echo insert killadware stuff here
+ping 1.1.1.1 -n 1 -w 5000 > nul
 
-REM Using "IF" command to determine if Malwarebytes is installed, and then sending to the previous labelled lines assigned commands.
-IF /I %$Winprocsr%==AMD64 (IF EXIST %ProgramFiles(x86)%/Malwarebytes' Anti-Malware (goto ::mbamyes) Else (goto ::mbamno))
+echo the real end of file
 pause
 
 
