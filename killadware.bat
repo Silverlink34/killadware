@@ -45,7 +45,7 @@ SET $Winxpsp1=Microsoft Windows [Version 5.1.2600.1105-1106]
 SET $Winxpsp2=Microsoft Windows [Version 5.1.2600.2180]
 SET $Winxpsp3=Microsoft Windows [Version 5.1.2600]
 SET $Win8=Microsoft Windows [Version 6.2.9200]
-SET $Win8.1=Microsoft Windows [Version 6.3.9600.16384.130821-1623]
+SET $Win81=Microsoft Windows [Version 6.3.9600.16384.130821-1623]
 REM The following command takes output from "ver" and stores it to "$Winver"
 for /f "delims=" %%i in ('ver') do set $Winver=%%i
 REM The following command takes output from "%PROCESSOR_ARCHITECTURE%
@@ -65,39 +65,65 @@ REM The following commands will compare "$Winver" to the previously set OS varia
 REM and determine and output your version and processor type.
 echo.
 IF /I "%$winver%"=="%$Win7sp1%" (echo You are running Windows 7 with Service Pack 1 and have a & echo %$Explprocsr%.)
+IF /I "%$winver%"=="%$Win7%" (echo You are running Windows 7 (no service pack) and have a & echo %$Explprocsr%.)
+IF /I "%$winver%"=="%$Winxp%" (echo You are running Windows XP (no service pack).)
+IF /I "%$winver%"=="%$Winxpsp1%" (echo You are running Windows XP with Service Pack 1.)
+IF /I "%$winver%"=="%$Winxpsp2%" (echo You are running Windows XP with Service Pack 2.)
+IF /I "%$winver%"=="%$Winxpsp3%" (echo You are running Windows XP with Service Pack 3.)
+IF /I "%$winver%"=="%$Win8%" (echo You are running Windows 8 and have a & echo %$Explprocsr%.)
+IF /I "%$winver%"=="%$Win81%" (echo You are running Windows 8.1 and have a & echo %$Explprocsr%.)
 echo.
 echo The script will now check for various programs to help with adware removal.
 ping 1.1.1.1 -n 1 -w 6000 > nul
 cls
-color 0c
 echo Checking to see if Malwarebytes is installed...
 echo.
+ping 1.1.1.1 -n 1 -w 1000 > nul
 REM Using labelled lines with commands to be executed if Malwarebytes is installed or not. "goto:eof" ends the command list.
 
 :mbamyes
+cls
+color 0B
 echo Malwarebytes Anti-Malware has been detected and installed on your system.
 echo.
 echo This script will remove several known adware programs, BUT it is intended to run 
 echo after Malwarebytes has ran, because Malwarebytes will remove a great deal more.
 echo The intent of this script is to remove programs that Malwarebytes failed to remove.
-echo.
-echo If you have already ran Malwarebytes, or want to run the script anyways, press a key to begin adware removal.
-echo.
-echo If you wish to run Malwarebytes before continuing, please close this script now and re-run it after scanning.
-echo.
-echo It is advised to perform a Full Scan and remove EVERYTHING that is detected, reboot, then run this script.
-pause>nul
-echo put adware removal reference variable here
 ping 1.1.1.1 -n 1 -w 3000 > nul
+echo.
+echo If you like, I can start a Malwarebytes Full Scan for you.
+set /p ask1=Would you like to run a full scan now? (y/n)
+IF %ask%==y (goto :runmbamscan) else (echo Skipping scan and proceding with adware removal..)
 goto:eof
 
 :mbamno
-echo You do not have Malwarebytes installed on your system. It is advised to run Malwarebytes Full Scan before using this script.
-echo This script will remove several known adware programs, BUT it is intended to run AFTER
-echo Malwarebytes has ran, because Malwarebytes will remove a great deal more.
-echo The intent of this script is to remove programs that Malwarebytes failed to kill/remove.
+cls
+color 0C
+echo You do not have Malwarebytes installed on your system. 
+echo It is advised to run Malwarebytes Full Scan before using this script.
 echo.
+echo This script will remove several known adware programs, BUT it is intended to run 
+echo after Malwarebytes has ran, because Malwarebytes will remove a great deal more.
+echo The intent of this script is to remove programs that Malwarebytes failed to remove.
+ping 1.1.1.1 -n 1 -w 3000 > nul
+echo.
+echo If you like, I can download Malwarebytes for you and run a Full Scan.
+set /p ask1=Download Malwarebytes and then run a Full Scan? (y/n)
+IF %ask%==y (goto :dlmbam) else (echo Skipping MBAM dl/scan and proceding with adware removal..)
+goto:eof
+
+:runmbamscan
+echo didnt write the stuff yet lol
 pause
+goto:eof
+
+:dlmbam
+color 0B
+cls
+echo You chose to download Malwarebytes. 
+echo Downloading version 1.75, This version still updates definitions and doesn't use the poopy new interface.
+bitsadmin /transfer DLMBAM http://www.oldapps.com/malwarebytes.php?app=683FDD3D773C58B262DC07CD0C6CE938 %USERPROFILE%/Downloads
+
 goto:eof
 
 REM Using "IF" command to determine if Malwarebytes is installed, and then sending to the previous labelled lines assigned commands.
