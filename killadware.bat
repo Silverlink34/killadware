@@ -29,12 +29,13 @@ echo This script is written by Brandon.
 echo If you have any questions email brandongaliher7@gmail.com.
 echo Source is at http://github.com/silverlink34/killadware.git
 REM The "set /p" command waits for user input. This instance is set to be hidden,
-REM it is a hidden shortcut to skip the wait time.
+REM it is a hidden shortcut to skip around my script.
 REM The "ping" command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
 set /p skip1=
 IF %skip1%==s goto winversioncheck
+IF %skip1%==m goto runmbamscan
 ping 1.1.1.1 -n 1 -w 4000 > nul
 goto winversioncheck
 
@@ -161,8 +162,8 @@ IF NOT EXIST "C:/Program Files (x86)" goto set32
 
 REM This is the next step of the script that checks for MalwareBytes.
 :softwarecheck
-color 0b
-echo.
+cls
+color 0A
 echo The script will now check for various programs to help with adware removal.
 ping 1.1.1.1 -n 1 -w 3000 > nul
 cls
@@ -173,11 +174,14 @@ REM Using "IF" command to determine if Malwarebytes is installed, and then sendi
 REM "goto" doesn't work too well in parenthesis, and "if"s "else" command requires them.
 REM I am using the "NOT" flag for "IF" which would mean if doesn't exist.
 IF EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamyes
-IF NOT EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamno 
+IF NOT EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamno
+echo There was a problem detecting MalwareBytes.
+echo Starting KillAdware mode.. 
+goto killadware
 
 :mbamyes
 cls
-color 0B
+color 0A
 echo Malwarebytes Anti-Malware has been detected and installed on your system.
 echo.
 echo This script is intended to be ran after Malwarebytes scan because  
@@ -240,24 +244,32 @@ goto runmbamscan
 
 :runmbamscan
 cls
+color 1f
 echo Updating malware definitions...
-ping 1.1.1.1 -n 1 -w 2000 > nul
-"%$Progdir%/Malware*/mbam.exe /update"
+"%$Progdir%/Malwarebytes' Anti-Malware/mbam.exe"/update
+echo.
 echo Starting Malwarebytes.
-ping 1.1.1.1 -n 1 -w 3000 > nul
-echo Choose full scan then drives that you use regularly.
+ping 1.1.1.1 -n 1 -w 1000 > nul
+echo.
+echo Choose full scan, then choose drives that you use regularly.
+echo Start the scan.
 echo After the scan, click Show Results. 
 echo Right click any of the found malware (if any) and choose Check All.
 echo Choose Remove Selected.
 echo Malwarebytes may need some time here to process removal.
 echo After removal, you may need to reboot computer.
-echo If you need to restart, go ahead and let it.
-echo You will need to re-run this script and skip the scan.
+echo Read the rest of these directions before restarting.
 echo After the restart (or if you didn't need to) choose the Quarantine Tab.
 echo Choose Remove All.
-Echo After Quarantine removal, you may now exit Malwarebytes.
-cd %$Progdir%/Malware*
-mbam.exe
+echo After Quarantine removal, you may now exit Malwarebytes.
+echo.
+echo NOTE: After restarting, you will not see these instructions again.
+echo If you need to restart, make sure you note the Quarantine removal step.
+echo After restarting, re-run the script and skip the Malwarebytes scan
+echo to directly enter KillAdware Mode.
+echo If you didn't need to restart, just press any key after you close Malwarebytes.
+"%$Progdir%/Malwarebytes' Anti-Malware/mbam.exe"
+pause
 echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
 goto killadware
