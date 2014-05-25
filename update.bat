@@ -9,7 +9,6 @@ IF %ask1%==y goto gitupdate
 IF NOT %ask1%==y exit
 :gitupdate
 (
-echo ls
 echo git fetch --all
 echo git reset --hard origin/master
 ) | ..\git-bash.bat

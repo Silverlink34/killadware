@@ -28,10 +28,17 @@ ECHO Thank you for using my batch file!
 echo This script is written by Brandon.
 echo If you have any questions email brandongaliher7@gmail.com.
 echo Source is at http://github.com/silverlink34/killadware.git
-REM The following command is meant to substitute a "wait" or "sleep" command.
+REM The "set /p" command waits for user input. This instance is set to be hidden,
+REM it is a hidden shortcut to skip the wait time.
+REM The "ping" command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
+set /p skip1=
+IF %skip1%==s goto winversioncheck
 ping 1.1.1.1 -n 1 -w 4000 > nul
+goto winversioncheck
+
+:winversioncheck
 CLS
 color 0B
 echo Checking Windows Version... 
@@ -43,7 +50,7 @@ REM The "ver" command shows windows version. It doesn't output exact name,
 REM Such as "Windows 7", but it does return a number. I am using "set" to assign versions to expressions.
 SET $Win7=Microsoft Windows [Version 6.1.7600]
 SET $Win7sp1=Microsoft Windows [Version 6.1.7601]
-SET $Winxp=Microsoft Windows [Version 5.1.2600]
+SET $Winxp=Microsoft Windows XP [Version 5.1.2600]
 SET $Winxpsp1=Microsoft Windows [Version 5.1.2600.1105-1106]
 SET $Winxpsp2=Microsoft Windows [Version 5.1.2600.2180]
 SET $Winxpsp3=Microsoft Windows [Version 5.1.2600]
@@ -70,78 +77,98 @@ REM Using labelled lines with commands to be executed. They will only run if the
 REM Each sequence ends with "goto softwarecheck" which has it navigate to the next step of script.
 echo.
 IF /I "%$winver%"=="%$Win7sp1%" goto 71run
+IF /I "%$winver%"=="%$Win7%" goto 7run
+IF /I "%$winver%"=="%$Winxp%" goto xprun
+IF /I "%$winver%"=="%$Winxpsp1%" goto xp1run
+IF /I "%$winver%"=="%$Winxpsp2%" goto xp2run
+IF /I "%$winver%"=="%$Winxpsp3%" goto xp3run
+IF /I "%$winver%"=="%$Win8%" goto 8run
+IF /I "%$winver%"=="%$Win81%" goto 81run
+
+:osnotfound
+color 0C
+echo Could not determine your operating system.
+echo This script needs to know if your operating system has a Program Files (x86) directory.
+ping 1.1.1.1 -n 1 -w 5000 > nul
+echo Checking for Program Files directories...
+ping 1.1.1.1 -n 1 -w 3000 > nul
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
+
+:set64
+color 0B
+echo Detected Program Files x(86) directory.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles(x86)%
+ping 1.1.1.1 -n 1 -w 4000 > nul
+goto softwarecheck
+
+:set32
+color 0B
+echo Detected Program Files directory.
+echo Setting Program Files directory for script..
+SET $Progdir=%ProgramFiles%
+ping 1.1.1.1 -n 1 -w 4000 > nul
+goto softwarecheck
+
 :71run
 echo You are running Windows 7 && echo %$Explprocsr% with Service Pack 1.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles(x86)%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Win7%" goto 7run
 :7run
 echo You are running Windows 7 && echo %$Explprocsr% with no service packs.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles(x86)%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Winxp%" goto :xprun
 :xprun
 echo You are running Windows XP with no service packs.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Winxpsp1%" goto xp1run
 :xp1run
 echo You are running Windows XP with Service Pack 1.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Winxpsp2%" goto xp2run
 :xp2run
 echo You are running Windows XP with Service Pack 2.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Winxpsp3%" goto xp3run
 :xp3run
 echo You are running Windows XP with Service Pack 3.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Win8%" goto :8run
 :8run
 echo You are running Windows 8 && echo %$Explprocsr%.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles(x86)%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
-IF /I "%$winver%"=="%$Win81%" goto 81run
 :81run
 echo You are running Windows 8.1 && echo %$Explprocsr%.
-echo Setting Program Files directory for script..
-SET $Progdir=%ProgramFiles(x86)%
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto softwarecheck
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
 
 REM This is the next step of the script that checks for MalwareBytes.
 :softwarecheck
+color 0b
 echo.
 echo The script will now check for various programs to help with adware removal.
 ping 1.1.1.1 -n 1 -w 3000 > nul
 cls
 echo Checking to see if Malwarebytes is installed...
 echo.
-ping 1.1.1.1 -n 1 -w 2000 > nul
+ping 1.1.1.1 -n 1 -w 3000 > nul
 REM Using "IF" command to determine if Malwarebytes is installed, and then sending to labelled lines with assigned commands.
 REM "goto" doesn't work too well in parenthesis, and "if"s "else" command requires them.
 REM I am using the "NOT" flag for "IF" which would mean if doesn't exist.
@@ -153,41 +180,41 @@ cls
 color 0B
 echo Malwarebytes Anti-Malware has been detected and installed on your system.
 echo.
-echo This script will remove several known adware programs, BUT it is intended to run 
-echo after Malwarebytes has ran, because Malwarebytes will remove a great deal more.
-echo The intent of this script is to remove programs that Malwarebytes failed to remove.
+echo This script is intended to be ran after Malwarebytes scan because  
+echo it will kill/remove leftover programs. 
+echo This script can automate Malwarebytes scan.
 ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can start a Malwarebytes Full Scan for you.
 set /p ask1=Would you like to run a full scan now? (y/n)
 IF %ask1%==y goto runmbamscan
-IF NOT %ask1%==y echo Skipping scan and proceding with adware removal..
+IF NOT %ask1%==y echo Skipping Malwarebytes Scan.
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto dlmbam
-REM goto killadware
+echo Entering KillAdware mode.
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto killadware
+
 
 :mbamno
 cls
 color 0C
 echo You do not have Malwarebytes installed on your system. 
-echo It is advised to run Malwarebytes Full Scan before using this script.
+echo It is advised to run Malwarebytes Full Scan before killadware begins.
 echo.
-echo This script will remove several known adware programs, BUT it is intended to run 
-echo after Malwarebytes has ran, because Malwarebytes will remove a great deal more.
-echo The intent of this script is to remove programs that Malwarebytes failed to remove.
+echo This script is intended to be ran after Malwarebytes scan because  
+echo it will kill/remove leftover programs. 
+echo This script can automate Malwarebytes scan.
 ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can download Malwarebytes for you and run a Full Scan.
 set /p ask1=Download Malwarebytes and then run a Full Scan? (y/n)
 IF %ask1%==y goto :dlmbam
-IF NOT %ask1%==y echo Skipping MalwareBytes Download /w scan and proceding with adware removal..)
+IF NOT %ask1%==y echo Skipping MalwareBytes Download/Scan.)
+ping 1.1.1.1 -n 1 -w 2000 > nul
+echo.
+echo Entering KillAdware mode.
+ping 1.1.1.1 -n 1 -w 2000 > nul
 goto killadware
-
-:runmbamscan
-cls
-echo didnt write the stuff yet lol
-pause
-
 
 :dlmbam
 color 0B
@@ -211,8 +238,36 @@ ping 1.1.1.1 -n 1 -w 6000 > nul
 C:/mbam1.75.exe
 goto runmbamscan
 
+:runmbamscan
+cls
+echo Updating malware definitions...
+ping 1.1.1.1 -n 1 -w 2000 > nul
+"%$Progdir%/Malware*/mbam.exe /update"
+echo Starting Malwarebytes.
+ping 1.1.1.1 -n 1 -w 3000 > nul
+echo Choose full scan then drives that you use regularly.
+echo After the scan, click Show Results. 
+echo Right click any of the found malware (if any) and choose Check All.
+echo Choose Remove Selected.
+echo Malwarebytes may need some time here to process removal.
+echo After removal, you may need to reboot computer.
+echo If you need to restart, go ahead and let it.
+echo You will need to re-run this script and skip the scan.
+echo After the restart (or if you didn't need to) choose the Quarantine Tab.
+echo Choose Remove All.
+Echo After Quarantine removal, you may now exit Malwarebytes.
+cd %$Progdir%/Malware*
+mbam.exe
+echo Entering KillAdware mode.
+ping 1.1.1.1 -n 1 -w 2000 > nul
+goto killadware
+
+
 :killadware
-echo insert killadware stuff here
+cls
+color 4f
+echo KillAdware initiated.
+echo searching for known adware programs.
 ping 1.1.1.1 -n 1 -w 5000 > nul
 
 echo the real end of file
