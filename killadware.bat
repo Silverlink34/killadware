@@ -277,14 +277,16 @@ goto killadware
 :rdlmbam
 Color 0c
 Echo There was an error downloading MalwareBytes.
-set /p ask2=Retry downloading MalwareBytes?(y/n)
-IF %ask1%==y echo Skipping MalwareBytes Download/Scan.)
+set /p %askre%=Retry downloading MalwareBytes? (y/n)
+IF %askre%==y goto dlmbam
+echo Skipping MalwareBytes Download/Scan.
 
 :killadware
 cls
 color 4f
 echo KillAdware initiated.
-echo searching for known adware programs.
+ping 1.1.1.1 -n 1 -w 2000 > nul
+echo searching for known adware progranul
 ping 1.1.1.1 -n 1 -w 5000 > nul
 
 echo the real end of file
