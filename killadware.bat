@@ -212,8 +212,8 @@ ping 1.1.1.1 -n 1 -w 3000 > nul
 echo.
 echo If you like, I can download Malwarebytes for you and run a Full Scan.
 set /p ask1=Download Malwarebytes and then run a Full Scan? (y/n)
-IF %ask1%==y goto :dlmbam
-IF NOT %ask1%==y echo Skipping MalwareBytes Download/Scan.)
+IF %ask1%==y goto dlmbam
+IF NOT %ask1%==y echo Skipping MalwareBytes Download/Scan.
 ping 1.1.1.1 -n 1 -w 2000 > nul
 echo.
 echo Entering KillAdware mode.
@@ -274,6 +274,11 @@ echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
 goto killadware
 
+:rdlmbam
+Color 0c
+Echo There was an error downloading MalwareBytes.
+set /p ask2=Retry downloading MalwareBytes?(y/n)
+IF %ask1%==y echo Skipping MalwareBytes Download/Scan.)
 
 :killadware
 cls
@@ -284,5 +289,3 @@ ping 1.1.1.1 -n 1 -w 5000 > nul
 
 echo the real end of file
 pause
-
-
