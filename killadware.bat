@@ -23,6 +23,8 @@ echo You are agreeing to the disclaimer.
 echo Please close the window now if you do not accept.
 pause>nul
 REM "CLS" clears the screen of txt.
+
+:runtime
 CLS
 ECHO Thank you for using my batch file!
 echo This script is written by Brandon.
@@ -33,8 +35,67 @@ REM it is a hidden shortcut to skip around my script.
 REM The "ping" command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
-ping 1.1.1.1 -n 1 -w 4000 > nul
-goto winversioncheck
+echo -------------------------------------------------------------------------------
+echo Please choose a runtime mode.
+echo.
+echo Automatic mode will auto-detect settings and run needed programs.
+echo.
+echo Selective mode will let you choose what to run.
+echo This mode is for Advanced Users.
+echo.
+set /p rtime=Press "a" for Auto or "s" for Selective, then press Enter.
+IF %rtime%==a goto winversioncheck
+IF %rtime%==s goto setprgrmdir
+echo You did not make a valid choice. Please try again.
+goto runtime
+
+:setprgrmdir
+cls
+color 0B
+echo Please select Processor Type 64bit or 32bit.
+echo This script needs to know if Program Files (x86) exists.
+echo If unsure, type "a" to auto-detect processor type.
+echo.
+set /p prgrmdir=Type "32", "a" or "64" then press enter.
+IF %prgrmdir%==32 goto set32
+IF %prgrmdir%==64 goto set64
+IF %prgrmdir%==a goto autoprgrmdir
+echo You did not make a valid choice. Please try again.
+goto setprgrmdir
+
+:autoprgrmdir
+cls
+color 0B
+echo Checking for Program Files directories...
+ping 1.1.1.1 -n 1 -w 3000 > nul
+IF EXIST "C:/Program Files (x86)" goto set64
+IF NOT EXIST "C:/Program Files (x86)" goto set32
+
+:menu
+cls
+color 0A
+echo SELECTIVE RUN MODE
+echo -------------------------------------------------------------------------------
+echo Type "a" then press Enter at any time to exit this menu and enter easy mode.
+echo.
+echo 1 - Reset Processor Architexture to 32bit or 64bit
+echo.
+echo 2 - Download and Install MalwareBytes V.1.75
+echo.
+echo 3 - Run MalwareBytes (avoid re-running this script again)
+echo.
+echo 4 - Initiate KillAdware Mode
+echo.
+echo -------------------------------------------------------------------------------
+echo It is recommended to run Full MalwareBytes scan before entering KillAdware mode.
+set /p select1=Please type an item number or "a" and then press Enter.
+IF %select1%==1 goto setprgrmdir
+IF %select1%==2 goto dlmbam
+IF %select1%==3 goto runmbamscan
+IF %select1%==4 goto killadware
+IF %select1%==a goto softwarecheck
+echo You did not make a valid choice. Please try again.
+goto menu
 
 :winversioncheck
 CLS
@@ -82,6 +143,7 @@ IF /I "%$winver%"=="%$Winxpsp2%" goto xp2run
 IF /I "%$winver%"=="%$Winxpsp3%" goto xp3run
 IF /I "%$winver%"=="%$Win8%" goto 8run
 IF /I "%$winver%"=="%$Win81%" goto 81run
+goto osnotfound
 
 :osnotfound
 color 0C
@@ -94,19 +156,25 @@ IF EXIST "C:/Program Files (x86)" goto set64
 IF NOT EXIST "C:/Program Files (x86)" goto set32
 
 :set64
+cls
 color 0B
 echo Detected Program Files x(86) directory.
 echo Setting Program Files directory for script..
 SET $Progdir=%ProgramFiles(x86)%
 ping 1.1.1.1 -n 1 -w 4000 > nul
+IF %prgrmdir%==64 goto menu
+IF %prgrmdir%==a goto menu
 goto softwarecheck
 
 :set32
+cls
 color 0B
 echo Detected Program Files directory.
 echo Setting Program Files directory for script..
 SET $Progdir=%ProgramFiles%
 ping 1.1.1.1 -n 1 -w 4000 > nul
+IF %prgrmdir%==32 goto menu
+IF %prgrmdir%==a goto menu
 goto softwarecheck
 
 :71run
@@ -233,10 +301,11 @@ for /f "delims=" %%i in ('fsize.bat C:\mbam1.75.exe') do set $fsizembam=%%i
 if %$fsizembam% EQU 10285040 echo Malwarebytes Installer was successfully downloaded.
 if NOT %$fsizembam% EQU 10285040 goto rdlmbam
 echo Starting installer now. Follow instructions, install to default locations.
-echo Make at the end of the installer you uncheck all options:
+echo Make sure at the end of the installer you uncheck all options:
 echo "Enable free trial", "Update Malwarebytes" and "Launch" need to be disabled!
-ping 1.1.1.1 -n 1 -w 6000 > nul
+ping 1.1.1.1 -n 1 -w 5000 > nul
 C:/mbam1.75.exe
+IF %select1%==2 goto menu
 goto runmbamscan
 
 :runmbamscan
@@ -269,6 +338,7 @@ echo If you didn't need to restart, just press any key after you close Malwareby
 pause
 echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
+IF %select1%==3 goto menu
 goto killadware
 
 :rdlmbam
@@ -277,6 +347,7 @@ Echo There was an error downloading MalwareBytes.
 set /p %askre%=Retry downloading MalwareBytes? (y/n)
 IF %askre%==y goto dlmbam
 echo Skipping MalwareBytes Download/Scan.
+goto killadware
 
 :killadware
 cls
