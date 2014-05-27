@@ -33,9 +33,6 @@ REM it is a hidden shortcut to skip around my script.
 REM The "ping" command is meant to substitute a "wait" or "sleep" command.
 REM The given ip doesn't exist. Nul hides it's output, 
 REM and -w 3000 sets it to wait 3 seconds.
-set /p skip1=
-IF %skip1%==s goto winversioncheck
-IF %skip1%==m goto runmbamscan
 ping 1.1.1.1 -n 1 -w 4000 > nul
 goto winversioncheck
 
