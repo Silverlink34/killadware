@@ -92,7 +92,7 @@ set /p select1=Please type an item number or "a" and then press Enter.
 IF %select1%==1 goto setprgrmdir
 IF %select1%==2 goto dlmbam
 IF %select1%==3 goto runmbamscan
-IF %select1%==4 goto killadware
+IF %select1%==4 goto startkilladware
 IF %select1%==a goto softwarecheck
 echo You did not make a valid choice. Please try again.
 goto menu
@@ -242,7 +242,7 @@ IF EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamyes
 IF NOT EXIST "%$Progdir%/Malwarebytes' Anti-Malware" goto mbamno
 echo There was a problem detecting MalwareBytes.
 echo Starting KillAdware mode.. 
-goto killadware
+goto startkilladware
 
 :mbamyes
 cls
@@ -261,7 +261,7 @@ IF NOT %ask1%==y echo Skipping Malwarebytes Scan.
 ping 1.1.1.1 -n 1 -w 2000 > nul
 echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto killadware
+goto startkilladware
 
 
 :mbamno
@@ -283,7 +283,7 @@ ping 1.1.1.1 -n 1 -w 2000 > nul
 echo.
 echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
-goto killadware
+goto startkilladware
 
 :dlmbam
 color 0B
@@ -339,7 +339,7 @@ pause
 echo Entering KillAdware mode.
 ping 1.1.1.1 -n 1 -w 2000 > nul
 IF %select1%==3 goto menu
-goto killadware
+goto startkilladware
 
 :rdlmbam
 Color 0c
@@ -347,15 +347,47 @@ Echo There was an error downloading MalwareBytes.
 set /p %askre%=Retry downloading MalwareBytes? (y/n)
 IF %askre%==y goto dlmbam
 echo Skipping MalwareBytes Download/Scan.
-goto killadware
+goto startkilladware
 
-:killadware
+:startkilladware
 cls
-color 4f
+color 37
 echo KillAdware initiated.
 ping 1.1.1.1 -n 1 -w 2000 > nul
-echo searching for known adware progranul
-ping 1.1.1.1 -n 1 -w 5000 > nul
+:killadware
+color 37
+echo searching for known adware programs and their directories...
+ping 1.1.1.1 -n 1 -w 4000 > nul
+IF EXIST %$Progdir%/OutfoxTV goto foundoutfoxtv
+echo Finished searching for known AdWare.
+pause
+
+:foundoutfoxtv
+color 0c
+echo Found OutfoxTV adware file location. Starting custom removal process..
+ping 1.1.1.1 -n 1 -w 4000 > nul
+echo Checking for known running processes.
+tasklist /fi "imagename eq Outfoxtvupdater.exe" 2>NUL | find /I /N "Outfoxtvupdater.exe">NUL
+if "%ERRORLEVEL%"=="0" (echo Process "Outfoxtvupdater.exe" found running. Executing KillOutfoxTV script. & goto killoutfoxtv)
+tasklist /fi "imagename eq desktopcontainer.exe" 2>NUL | find /I /N "desktopcontainer.exe">NUL
+if "%ERRORLEVEL%"=="0" (echo Process "desktopcontainer.exe" found running. Executing KillOutfoxTV script. & goto killoutfoxtv)
+echo Processes were not found running. Removing Outfoxtv directory.
+echo  KillOutFoxTV script finished. Restarting KillAdware to find additional adware.
+goto killadware
+
+:killoutfoxtv
+taskkill /f /t /im outfoxtvupdater.exe
+taskkill /f /t /im desktopcontainer.exe
+echo Quickly removing folders before process restarts..
+rd /s /q "%$Progdir%/OutfoxTV"
+IF NOT EXIST %$Progdir%/OutfoxTV echo Successfully deleted directory.
+echo Removing shortcuts..
+del /f /q "%userprofile%/Desktop/Outfoxtv"
+echo Changing startup option to disabled..
+sc config outfoxtvupdater.exe start= disabled
+echo KillOutFoxTV script finished. Restarting KillAdware to find additional adware.
+goto killadware
+
 
 echo the real end of file
 pause
