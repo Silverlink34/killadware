@@ -288,7 +288,9 @@ goto startkilladware
 :dlmbam
 color 0B
 cls
-echo You chose to download Malwarebytes. 
+echo You chose to download Malwarebytes.
+ping 1.1.1.1 -n 1 -w 2000 > nul
+if %$fsizembam% EQU 10285040 goto installmbam
 echo We will use V1.75, it works nicely and updates definitions.
 echo.
 echo Downloading mbam1.75.exe to C:\..
@@ -300,6 +302,7 @@ REM Then we can verify if the file downloaded completely/correctly.
 for /f "delims=" %%i in ('fsize.bat C:\mbam1.75.exe') do set $fsizembam=%%i
 if %$fsizembam% EQU 10285040 echo Malwarebytes Installer was successfully downloaded.
 if NOT %$fsizembam% EQU 10285040 goto rdlmbam
+:installmbam
 echo Starting installer now. Follow instructions, install to default locations.
 echo Make sure at the end of the installer you uncheck all options:
 echo "Enable free trial", "Update Malwarebytes" and "Launch" need to be disabled!

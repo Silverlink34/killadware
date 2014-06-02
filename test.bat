@@ -21,7 +21,9 @@ rem 1st findstr: lists all exe files. the /n flag will not number them 1,2,3 but
 rem 2nd findstr: numbers the results of 1st "findstr" as 1,2,3 ect. (eg. 1:program.exe 2:app.exe
 rem 3rd findstr: selects result number and will output the exe with specified number. (eg. number specified is 2. output: 2:app.exe)
 rem The "for" delimters then kicks in, so if the 3rd findstr outputs 2:app.exe, the "2" and ":" are removed and it then outputs app.exe and tells taskkill to kill app.exe using "do" command.
-rem The command is listed several times simply so it will run taskkill individually for each found exe file. The 3rd findstr is moved up a number on each line that way it kills each result returned from all found .exe files.
+rem The command is listed several times simply so it will run taskkill individually for each found exe file. The 3rd findstr is moved up a number on each line that way it kills each result returned from all found .exe files. 
+for /f "tokens=3 delims=\" %%i in ('dir *.exe /s/b ^| findstr ".exe" ^| findstr /n ".exe" ^| findstr /b "1:"') do echo %%i
+goto skip
 for /f "tokens=1 delims=1234567890:" %%i in ('dir /s /b "%ProgramFiles(x86)%\%slctddir%" ^| findstr /s ".exe" ^| findstr /N ".exe" ^| findstr "1:"') do taskkill /t /f /im %%i
 for /f "tokens=1 delims=1234567890:" %%i in ('dir /s /b "%ProgramFiles(x86)%\%slctddir%" ^| findstr /s ".exe" ^| findstr /N ".exe" ^| findstr "2:"') do taskkill /t /f /im %%i
 for /f "tokens=1 delims=1234567890:" %%i in ('dir /s /b "%ProgramFiles(x86)%\%slctddir%" ^| findstr /s ".exe" ^| findstr /N ".exe" ^| findstr "3:"') do taskkill /t /f /im %%i
